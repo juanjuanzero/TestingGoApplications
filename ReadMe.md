@@ -57,4 +57,16 @@ Create a slice of structs that you pass into the test using a for-loop
 
 # Benchmarking and Profiling
 
--
+- testing.B:
+  - b.N: the number of times our benchmarking to run.
+  - Timer methods
+    - b.StartTimer: start the timer for the benchmark
+    - b.StopTimer:
+    - b.ResetTimer:
+  - b.RunParallel: runs routines in parallel
+- Benchmarks are always prefixed with Benchmark
+- run the test using the `go test -bench`
+- provide a duration using the command `go test -bench -bencthtime 10s`, which will run the benchmark for 10s. Default is 1s. You could use this on end-to-end tests.
+- `go test -benchmem` will show you the memory profile in go.
+- `go test -trace {trace.out}` will help you trace your tests
+- graphviz for go tool pprof to profile and output a file.
