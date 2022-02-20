@@ -73,6 +73,10 @@ func (th TwitterHander) RedirectUrl() string {
 }
 ```
 
+# Embeding Types
+
+Conflicts, you can still have the same field name types, the compiler will stop you from doing that. If you have a conflict.
+
 # Learning Testing
 
 Useful packages
