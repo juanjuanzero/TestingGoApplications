@@ -1,3 +1,78 @@
+# Learning Interfaces and Structs
+
+Working with interface and struct
+
+- in go, an interface is just something that holds a set of functions, structs hold private and public fields
+- when you have Pointer based receivers, the method that you work in, works on the object stored in memory (dereference) a pointer to that actuall object as opposed to value based functions.
+
+You see that the functions in the Person struct type have an \* next to the struct name Person. This is signifies that this function is pointing to the object and it works on that object instance.
+
+```Go
+//interfaces only contain functions
+type Indetifiable interface {
+	ID() string
+}
+
+//lower cased properties are non-exported fields
+type Person struct {
+	firstName     string
+	lastName      string
+	twitterHandle string
+}
+
+func (p *Person) ID() string {
+	return "12345"
+}
+
+//a constructor is just a function that returns an instance
+func NewPerson(first string, last string) *Person {
+	return &Person{
+		firstName: first,
+		lastName:  last,
+	}
+}
+
+func (p *Person) FirstAndLast() (string, string) {
+	return p.firstName, p.lastName
+}
+
+func (p *Person) FullName() string {
+	return fmt.Sprintf("%v %v", p.firstName, p.lastName)
+}
+
+func (p *Person) GetTwitterHandle() string {
+	return p.twitterHandle
+}
+
+func (p *Person) SetTwitterHandle(handle string) error {
+	if !strings.HasPrefix(handle, "@") {
+		return errors.New("twitter handles must begin with '@'")
+	}
+
+	p.twitterHandle = handle
+	return nil //return a nil error
+}
+```
+
+# Working with Type Aliases & Declarations
+
+Type Aliases are references to another type. This copies the fields and the method sets. You alias a type by writing `type NewTypeAlias = OldType`
+
+If you want to use type declarations, it copies the fields of an object over to another new type. You declre type by writing `type NewTypeDeclare OldType`
+
+Here we will add a new type and call it TwitterHandler in person.go
+
+```Go
+//type declaration
+type TwitterHander string
+
+//type declarations enables you to add code to it
+func (th TwitterHander) RedirectUrl() string {
+	cleanedHandler := strings.TrimPrefix(string(th), "@")
+	return fmt.Sprintf("https://www.twitter.com/%s", cleanedHandler)
+}
+```
+
 # Learning Testing
 
 Useful packages
