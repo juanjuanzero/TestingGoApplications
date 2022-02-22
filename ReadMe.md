@@ -9,7 +9,7 @@ You see that the functions in the Person struct type have an \* next to the stru
 
 ```Go
 //interfaces only contain functions
-type Indetifiable interface {
+type Identifiable interface {
 	ID() string
 }
 
@@ -75,7 +75,150 @@ func (th TwitterHander) RedirectUrl() string {
 
 # Embeding Types
 
-Conflicts, you can still have the same field name types, the compiler will stop you from doing that. If you have a conflict.
+You can embed structs into other structs. That effectively takes the memory layout of the struct and embed it into the other struct as well. To see this in action, we'll go ahead update the code to create a new struct called Name and move the FirstAndLast() call as a part of that name.
+
+```Go
+type Name struct {
+	first string
+	last string
+}
+
+//type declaration
+type TwitterHander string
+
+//type declarations enables you to add code to it
+func (th TwitterHander) RedirectUrl() string {
+	cleanedHandler := strings.TrimPrefix(string(th), "@")
+	return fmt.Sprintf("https://www.twitter.com/%s", cleanedHandler)
+}
+
+//Update Person to have a name type
+type Person struct {
+	Name
+	twitterHandle TwitterHander
+}
+
+//a constructor is just a function that returns an instance
+func NewPerson(first string, last string) *Person {
+	return &Person{
+		Name: Name{ first : first, last: last},
+	}
+}
+
+//here you can call first and last properties of the Name field without calling .Name first
+func (p *Person) FirstAndLast() (string, string) {
+	return p.first, p.last //could also be p.Name.first , p.Name.last
+}
+
+func (p *Person) FullName() string {
+	return fmt.Sprintf("%v %v", p.first, p.last) //could also be p.Name.first , p.Name.last
+}
+```
+
+See how you didn't have to work with layers like abstractions like abstract classes and things like that.
+
+## Embeding Interfaces
+
+You can embed interfaces as well. The _method set_ on the class is what gets embeded into the class. We'll go ahead and implement another identifiable class that we can use.
+
+```Go
+//type declaration
+type socialSecurityNumber string
+//constructor for the struct
+func NewSocialSecurityNumber(value string) Identifiable {
+	return socialSecurityNumber(value)
+}
+//implementing the identifiable interface
+func (ssn socialSecurityNumber) ID() string {
+	return string(ssn) //create a string from the value passed in from the constructor
+}
+
+//a constructor is just a function that returns an instance, add it to the constructor
+func NewPerson(first string, last string, identifiable Identifiable) *Person {
+	return &Person{
+		Name:         Name{first: first, last: last},
+		Identifiable: identifiable,
+	}
+}
+
+//adding identifiable to Person
+type Person struct {
+	Name
+	twitterHandle TwitterHander
+	Identifiable
+}
+
+//comment this out
+//func (p *Person) ID() string {
+//	return "12345"
+//}
+```
+
+So here we embeded an interface onto a struct, but on instantiation we constructed an implementation of that interface `socialSecurityNumber` which is the type declaration that implements Identifiable
+
+We can extend this even more by creating another struct, like a country method. We'll create another struct here is the new interface and the new struc
+.
+
+```GO
+type Citizen interface {
+	Country() string
+	Identifiable
+}
+
+//new struct
+type europeanUnionIdentifier struct {
+	id      string
+	country string
+}
+
+//constructor for the struct
+func NewEuropeanUnionIdentifier(value string, country string) Citizen {
+	return &europeanUnionIdentifier{id: value, country: country}
+}
+
+//implementing the identifiable interface
+func (eui europeanUnionIdentifier) ID() string {
+	return fmt.Sprintf("ID: %v, from: %v", eui.id, eui.country) //create a string from the value passed in from the constructor
+}
+
+func (eui europeanUnionIdentifier) Country() string {
+	return eui.country
+}
+```
+
+As you can see the new struct retuns an object that implements the Citizen interface which has the ID() and the Citizen(). The instances now implement the Citizen interface independently, and meanwhile the Citizen interface embeds the identifieable interface, which just implements ID.
+
+Conflicts, you can still have the same field name types, the compiler will stop you from doing that. If you have a conflict the compiler will tell you that you have an ambiguous reference.
+
+# Comparability and Equality
+
+As long as your go type has a predictable memory layout you should be good to compare.
+
+- The compiler cant protect you from comparing two types that have a different memory layout. What would not have an different memory layout? These could be functions, slices or maps that grows in its memory layout.
+
+```Go
+// person.go
+type ContactDetail struct {
+	Email string
+	Phone string
+}
+```
+
+```Go
+// main.go
+fmt.Printf("\n--- Contact Detail Matching? ---\n")
+cd1 := person.ContactDetail{Email: "hello@world.com", Phone: "867-5309"}
+cd2 := person.ContactDetail{Email: "hello@world.com", Phone: "867-5309"}
+
+if cd1 == cd2 {
+    fmt.Println("We match! ya!")
+}
+```
+
+Here we have a simple struct called ContactDetail, it has an Email and Phone fields and in main.go we instantiate two instances cd1 and cd2. We check if they are equal and when the code is executed we get the message confirming that they do match. Go takes the struct with a consistent memory layout of Contact Detail and compares the two, field for field. You could get an in consistent memory layout when you have data structures that are mutable, like maps and slices. Also functions too!
+
+- If you have a consistent memory layout in Go you they are hashable, which means that you can use a key
+- Equals method, would be like implemting how your equality is implemented.
 
 # Learning Testing
 
