@@ -220,6 +220,38 @@ Here we have a simple struct called ContactDetail, it has an Email and Phone fie
 - If you have a consistent memory layout in Go you they are hashable, which means that you can use a key
 - Equals method, would be like implemting how your equality is implemented.
 
+# Go Functions
+
+You can attach methods to structs in Go, these behave like methods. Just like the ID() is a method on the Person struct. By default, the behavior is value based, Go creates a copy of the instance and returns that copy. You can change this by declaring the dereference pointer on the method with a `*`. This makes it a pointer based method receiver.
+
+## Value Receivers
+
+This is the the behavoir of most of the functions that you write in go. When a function returns something it returns the value of that return statement, not necessarily the object stored in a particular memory location.
+
+## Pointer Based Receivers
+
+This is like attaching methods in golang. When you have a pointer based receiver function, this function takes a pointer to the object that is stored in memory handles works with that object to either mutate it.
+
+### When to use pointers?
+
+I think its best to use pointers when you are going to work with an object instance and expect to return it in your function. Value based receivers create a copy of the object passed in and return it (maybe), so it reduces that work.
+
+## Variadric Functions
+
+If you want to spread parameters into a variadic function all you have to do is spread it.
+
+# Functions as values, and anonymouse functions
+
+Functions are first class citizens in Golang, just like in javascript. Functions can be stored as a variable and then invoked using `(<parameter>)`. The code below shows how an anonymous function that gets stored as a variable and then invoked.
+
+```Go
+a := func(name string) {
+		fmt.Printf("hello there, %v how are you?\n", name)
+	}
+
+a("Juan")
+```
+
 # Learning Testing
 
 Useful packages

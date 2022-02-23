@@ -42,4 +42,11 @@ func main() {
 	if cd1 == cd2 {
 		fmt.Println("We match! ya!")
 	}
+
+	fmt.Printf("\n--- Anonymous Functions ---\n")
+	a := func(name string) {
+		fmt.Printf("hello there, %v how are you?\n", name)
+	}
+
+	a("Juan")
 }
