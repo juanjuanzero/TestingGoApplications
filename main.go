@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"gotesting/person"
+	"math"
 )
 
 func main() {
@@ -49,4 +50,21 @@ func main() {
 	}
 
 	a("Juan")
+
+	fmt.Printf("\n--- Stateful Functions ---\n")
+	b1 := powerOfThree()
+	fmt.Printf("b1: %v\n", b1()) //first call
+
+	b2 := powerOfThree()
+	fmt.Printf("b2: %v\n", b2())       //8, different scope
+	fmt.Printf("b1 again: %v\n", b1()) //27
+	fmt.Printf("b1 again: %v\n", b1()) //64
+}
+
+func powerOfThree() func() int64 {
+	x := 1.0
+	return func() int64 {
+		x += 1
+		return int64(math.Pow(x, 3))
+	}
 }

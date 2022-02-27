@@ -240,7 +240,7 @@ I think its best to use pointers when you are going to work with an object insta
 
 If you want to spread parameters into a variadic function all you have to do is spread it.
 
-# Functions as values, and anonymouse functions
+# Functions as values, and anonymous functions
 
 Functions are first class citizens in Golang, just like in javascript. Functions can be stored as a variable and then invoked using `(<parameter>)`. The code below shows how an anonymous function that gets stored as a variable and then invoked.
 
@@ -250,6 +250,47 @@ a := func(name string) {
 	}
 
 a("Juan")
+```
+
+# Functions can be stateful
+
+Where the state is held in the function.
+
+```Go
+func powerOfThree() func() int64 {
+	x := 1.0
+	return func() int64 {
+		x += 1
+		return int64(math.Pow(x, 3))
+	}
+}
+```
+
+Here we have a function that holds the state of the variable `x`. With each call x is incremented by 1 and then calls the `math.Pow()`.
+
+> Be careful with stateful functions, some times it may not be clear where you declare the state of the function and it can cause weird behavior.
+
+# Control Flow in Functions
+
+## Error Handling
+
+- its best to handle errors immediately by checking if an error != nil.
+- read what the interface expects to handle good execution, e.g. io.Reader would send io.EOF (End of File) error to indicate that the reader has reached the end of file, so in our code we could handle that error.
+
+## Defer Function
+
+- will execute the function as soon as
+- defered functions are added to the stack as they are declared and they get poped off the stack as they
+
+## Panics
+
+- these are thrown when something catastrophic happens
+- you can recover from pancis using the recover(), normally in a defer function.
+
+```Go
+if p := recover(); p != nil; {
+	//recover code
+}
 ```
 
 # Learning Testing
